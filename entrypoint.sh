@@ -17,6 +17,8 @@ fi
 app_name=$(grep -E "^APP_NAME=" "$env_file" | cut -d '=' -f2 | sed -e 's/^"//' -e 's/"$//')
 # Obter o valor da variável APP_IMAGE do arquivo .env
 app_image=$(grep -E "^APP_IMAGE=" "$env_file" | cut -d '=' -f2 | sed -e 's/^"//' -e 's/"$//')
+# Obter o valor da variável APP_PORT do arquivo .env e remover quaisquer caracteres não numéricos
+app_port=$(grep -E "^APP_PORT=" "$env_file" | cut -d '=' -f2 | tr -cd '[:digit:]')
 
 # Converter o valor da variável APP_NAME para minúsculas
 app_name=$(echo "$app_name" | tr '[:upper:]' '[:lower:]')
@@ -140,3 +142,8 @@ networks:
     name: ${app_name}" > "$docker_compose_file"
 
 echo -e "\e[32mArquivo $docker_compose_file criado com sucesso!\e[0m"
+
+# Comando make install
+make install
+
+echo -e "\e[32mAplicação acessivel em: http://localhost:${app_port} \e[0m"
