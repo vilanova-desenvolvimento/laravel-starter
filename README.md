@@ -4,9 +4,11 @@ Para executar a aplicação, siga os seguintes passos:
 
 1. Preencher as variáveis de ambiente no arquivo `.env.example`:
 
-APP_NAME="Laravel microservico" # Nome da aplicação, será base dos containers
-APP_PORT=8002 # Porta em que a aplicação será executada
-APP_IMAGE="devsidnei/php8.2-fpm-dev:latest" # Imagem PHP utilizada na criação dos containers
+| Variável de Ambiente | Valor                            | Descrição                                       |
+|----------------------|----------------------------------|-------------------------------------------------|
+| APP_NAME             | Laravel microservico             | Nome da aplicação, será base dos containers    |
+| APP_PORT             | 8002                             | Porta em que a aplicação será executada        |
+| APP_IMAGE            | devsidnei/php8.2-fpm-dev:latest  | Imagem PHP utilizada na criação dos containers |
 
 2. Utilize o comando `make` para listar as opções disponíveis:
 
