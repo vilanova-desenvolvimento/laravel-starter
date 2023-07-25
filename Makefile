@@ -20,12 +20,10 @@ install: ## Cria os arquivos de configuração de aplicação, sobe os container
 
 ## Impede que estes comandos sejam executados por em produção
 ifeq ($(strip $(APP_ENV_CONTENT)),local)
-
-uninstall: ## Derruba os container da aplicação e limpa arquivos relacionados.	
+uninstall: ## Comando destrutivo. Destroi os container da aplicação e apaga arquivos relacionados.	
 	@rm -rf docker-compose
 	@rm -f composer.lock
 	@rm -f .env
 	@docker compose down --remove-orphans
 	@rm -f docker-compose.yml
-
 endif
