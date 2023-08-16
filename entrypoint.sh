@@ -32,10 +32,15 @@ if [ ! -f "$env_file" ]; then
     cp "$env_example" "$env_file"
     echo "\e[32mArquivo $env_file copiado do $env_example.\e[0m"
 
-    # Substituir o valor da variável REDIS_HOST no arquivo .env pelo valor ${app_name}-redis
+    # Parametriza o arquivo .env
     sed -i "s/^REDIS_HOST=.*/REDIS_HOST=${app_name}-redis/" "$env_file"
-
-    echo "\e[32mValor da variável REDIS_HOST substituído por ${app_name}-redis no arquivo $env_file.\e[0m"
+    sed -i "s/^DB_HOST=.*/DB_HOST=${app_name}-mariadb/" "$env_file"
+    sed -i "s/^DB_DATABASE=.*/DB_DATABASE=${app_name}-database/" "$env_file"
+    sed -i "s/^DB_USERNAME=.*/DB_USERNAME=${app_name}-username/" "$env_file"
+    sed -i "s/^DB_PASSWORD=.*/DB_PASSWORD=${app_name}-password/" "$env_file"
+     
+    echo "\e[32mValor das variaveis no arquivo $env_file foram parametrizados.\e[0m"
+     
 else
     echo "\e[33mO arquivo $env_file já existe. Não será copiado novamente. Encerrando o script. \e[0m"
     exit 1
@@ -137,11 +142,29 @@ services:
     networks:
       - ${app_name}
 
-  # redis  
+  #redis  
   ${app_name}-redis:
     container_name: ${app_name}-redis
     image: redis:latest
     restart: unless-stopped
+    networks:
+      - ${app_name}
+  
+  #mariadb
+  ${app_name}-mariadb:
+    container_name: ${app_name}-mariadb
+    image: mariadb:10.6.10
+    restart: unless-stopped
+    ports:
+      - \${DB_PORT}:3306
+    environment:
+      MYSQL_DATABASE: \${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: \${DB_PASSWORD}
+      MYSQL_PASSWORD: \${DB_PASSWORD} 
+      MYSQL_USER: \${DB_USERNAME}
+      TZ: "America/Sao_Paulo"
+    volumes:
+      - ./docker-compose/maridb:/var/lib/mysql
     networks:
       - ${app_name}
 
@@ -158,7 +181,12 @@ docker compose up -d && \
 		docker compose exec ${app_name}-app composer install --quiet && \
 		docker compose exec ${app_name}-app php artisan key:generate
 
-echo "\e[37m\e[44mAplicação acessível em: http://localhost:${app_port} \e[0m"
+echo "\e[32mAPP_URL=\e[0mhttp://localhost:${app_port}\e[0m " 
+echo "\e[32mREDIS_HOST=\e[0m${app_name}-redis\e[0m" 
+echo "\e[32mDB_HOST=\e[0m${app_name}-mariadb\e[0m"
+echo "\e[32mDB_DATABASE=\e[0m${app_name}-database\e[0m"
+echo "\e[32mDB_USERNAME=\e[0m${app_name}-username\e[0m"
+echo "\e[32mDB_PASSWORD=\e[0m${app_name}-password\e[0m"
 
 
 
